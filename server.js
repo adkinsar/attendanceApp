@@ -6,8 +6,10 @@ const ObjectID = mongodb.ObjectID;
 const CLASS_COLLECTION = "attendance";
 
 const app = express();
+const distDir = __dirname + "/dist/";
 
 app.use(bodyParser.json());
+app.use(express.static(distDir));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
 var db;
@@ -75,10 +77,35 @@ app.post("/api/attendance", function(req, res) {
  */
 
 app.get("/api/attendance/:id", function(req, res) {
+  db.collection(CLASS_COLLECTION).findOne({_id: new ObjectID(req.params.id) }, function(err, doc) {
+    if (err) {
+      handleError(res, err.message, "Failed to get contact");
+    } else {
+      res.status(200).json(doc);
+    }
+  });
 });
 
 app.put("/api/attendance/:id", function(req, res) {
+  var updateDoc = req.body;
+  delete updateDoc._id;
+
+  db.collection(CLASS_COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, updateDoc, function(err, doc) {
+    if (err) {
+      handleError(res, err.message, "Failed to update contact");
+    } else {
+      updateDoc._id = req.params.id;
+      res.status(200).json(updateDoc);
+    }
+  });
 });
 
 app.delete("/api/attendance/:id", function(req, res) {
+  db.collection(CLASS_COLLECTION).deleteOne({_id: new ObjectID(req.params.id)}, function(err, result) {
+    if (err) {
+      handleError(res, err.message, "Failed to delete contact");
+    } else {
+      res.status(200).json(req.params.id);
+    }
+  });
 });

@@ -37,7 +37,7 @@ export class StudentListComponent implements OnInit {
   }
   
   createNewStudent() {
-    let student: Student = {
+    var student: Student = {
       name: '',
       email: '',
       present: ''

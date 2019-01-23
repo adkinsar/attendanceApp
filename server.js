@@ -6,9 +6,9 @@ const ObjectID = mongodb.ObjectID;
 const CLASS_COLLECTION = "attendance";
 
 const app = express();
-const distDir = __dirname + "/dist/";
-
 app.use(bodyParser.json());
+
+const distDir = __dirname + "/dist/";
 app.use(express.static(distDir));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
@@ -54,7 +54,7 @@ app.get("/api/attendance", function(req, res) {
 });
 
 app.post("/api/attendance", function(req, res) {
-  let newStudent = req.body;
+  var newStudent = req.body;
   newStudent.createDate = new Date();
 
   if (!req.body.name) {
@@ -90,7 +90,7 @@ app.put("/api/attendance/:id", function(req, res) {
   var updateDoc = req.body;
   delete updateDoc._id;
 
-  db.collection(CLASS_COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, updateDoc, function(err, doc) {
+  db.collection(CLASS_COLLECTION).updateOne({ _id: req.params.id }, updateDoc, function(err, doc) {
     if (err) {
       handleError(res, err.message, "Failed to update contact");
     } else {

@@ -87,15 +87,14 @@ app.get("/api/attendance/:id", function(req, res) {
 });
 
 app.put("/api/attendance/:id", function(req, res) {
-  var updateDoc = req.body;
-  delete updateDoc._id;
+  var query = { _id: req.params.id };
+  var updateDoc = { $set: req.body };
 
-  db.collection(CLASS_COLLECTION).updateOne({ _id: req.params.id }, updateDoc, function(err, doc) {
+  db.collection(CLASS_COLLECTION).updateOne(query, updateDoc, function(err, doc) {
     if (err) {
       handleError(res, err.message, "Failed to update contact");
     } else {
-      updateDoc._id = req.params.id;
-      res.status(200).json(updateDoc);
+      res.status(200).json(doc);
     }
   });
 });
